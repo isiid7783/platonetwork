@@ -1,26 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8">
   <title>Plato Network</title>
   <style>
-    body {
-      font-family: monospace;
-      background: #ffffff;
-      color: #000000;
-      padding: 40px;
-    }
-    button {
-      font-size: 14px;
-      padding: 6px 12px;
-      cursor: pointer;
-    }
+    body { margin:0; background:#fff; font-family:sans-serif; }
+    #app { padding:16px; }
+    .box { border:1px solid #000; padding:12px; margin-bottom:12px; }
   </style>
 </head>
 <body>
+<div id="app">
+  <div class="box" id="wallet">wallet: connecting...</div>
+  <div class="box" id="position">position: loading...</div>
+  <div class="box" id="governance">governance: loading...</div>
+</div>
 
-  <button id="connect">Connect Wallet</button>
+<script>
+(async () => {
+  let address = "anonymous";
+  if (window.ethereum) {
+    const acc = await ethereum.request({ method: "eth_requestAccounts" });
+    if (acc.length) address = acc[0];
+  }
+  document.getElementById("wallet").textContent = "wallet: " + address;
 
-  <script src="app.js"></script>
+  /* Simulated on-chain state */
+  const createdAt = localStorage.getItem("plato_created_" + address)
+    || Date.now();
+  localStorage.setItem("plato_created_" + address, createdAt);
+
+  function render() {
+    const elapsed = Date.now() - createdAt;
+    document.getElementById("position").textContent =
+      "position active for " + Math.floor(elapsed / 1000) + " sec";
+  }
+
+  setInterval(render, 1000);
+})();
+</script>
 </body>
 </html>
